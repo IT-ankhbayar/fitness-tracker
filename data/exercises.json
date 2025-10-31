@@ -1,0 +1,352 @@
+[
+  {
+    "name": "Barbell Bench Press",
+    "primary_muscle": "Chest",
+    "secondary_muscles": "Shoulders,Triceps",
+    "equipment": "Barbell",
+    "movement_pattern": "Push",
+    "is_bodyweight": false,
+    "difficulty": "Intermediate",
+    "form_tips": "Keep feet flat on floor, shoulder blades retracted. Lower bar to mid-chest with elbows at 45 degrees. Press up explosively."
+  },
+  {
+    "name": "Dumbbell Bench Press",
+    "primary_muscle": "Chest",
+    "secondary_muscles": "Shoulders,Triceps",
+    "equipment": "Dumbbell",
+    "movement_pattern": "Push",
+    "is_bodyweight": false,
+    "difficulty": "Intermediate",
+    "form_tips": "Start with dumbbells at chest level. Press up until arms are extended. Lower with control, allowing greater stretch than barbell."
+  },
+  {
+    "name": "Incline Barbell Bench Press",
+    "primary_muscle": "Chest",
+    "secondary_muscles": "Shoulders,Triceps",
+    "equipment": "Barbell",
+    "movement_pattern": "Push",
+    "is_bodyweight": false,
+    "difficulty": "Intermediate",
+    "form_tips": "Set bench to 30-45 degrees. Keep shoulder blades retracted. Bar should touch upper chest. Great for upper chest development."
+  },
+  {
+    "name": "Push-ups",
+    "primary_muscle": "Chest",
+    "secondary_muscles": "Shoulders,Triceps,Core",
+    "equipment": "Bodyweight",
+    "movement_pattern": "Push",
+    "is_bodyweight": true,
+    "difficulty": "Beginner",
+    "form_tips": "Hands shoulder-width apart, body in straight line. Lower chest to ground, elbows at 45 degrees. Push back up to start."
+  },
+  {
+    "name": "Cable Chest Fly",
+    "primary_muscle": "Chest",
+    "secondary_muscles": null,
+    "equipment": "Cable",
+    "movement_pattern": "Push",
+    "is_bodyweight": false,
+    "difficulty": "Intermediate",
+    "form_tips": "Stand between cables at chest height. Slight bend in elbows. Bring hands together in arc motion. Control the return."
+  },
+  {
+    "name": "Barbell Deadlift",
+    "primary_muscle": "Back",
+    "secondary_muscles": "Legs,Core",
+    "equipment": "Barbell",
+    "movement_pattern": "Hinge",
+    "is_bodyweight": false,
+    "difficulty": "Advanced",
+    "form_tips": "Feet hip-width, bar over mid-foot. Hinge at hips, keep back neutral. Drive through heels to stand. Lower with control."
+  },
+  {
+    "name": "Barbell Row",
+    "primary_muscle": "Back",
+    "secondary_muscles": "Biceps",
+    "equipment": "Barbell",
+    "movement_pattern": "Pull",
+    "is_bodyweight": false,
+    "difficulty": "Intermediate",
+    "form_tips": "Bend at hips, back flat. Pull bar to lower chest/upper abs. Keep elbows close to body. Squeeze shoulder blades together."
+  },
+  {
+    "name": "Pull-ups",
+    "primary_muscle": "Back",
+    "secondary_muscles": "Biceps",
+    "equipment": "Bodyweight",
+    "movement_pattern": "Pull",
+    "is_bodyweight": true,
+    "difficulty": "Intermediate",
+    "form_tips": "Grip bar slightly wider than shoulders. Pull until chin over bar. Full range of motion. Control the descent."
+  },
+  {
+    "name": "Lat Pulldown",
+    "primary_muscle": "Back",
+    "secondary_muscles": "Biceps",
+    "equipment": "Machine",
+    "movement_pattern": "Pull",
+    "is_bodyweight": false,
+    "difficulty": "Beginner",
+    "form_tips": "Grip bar wider than shoulders. Pull to upper chest while keeping torso upright. Squeeze shoulder blades together. Control return."
+  },
+  {
+    "name": "Dumbbell Row",
+    "primary_muscle": "Back",
+    "secondary_muscles": "Biceps",
+    "equipment": "Dumbbell",
+    "movement_pattern": "Pull",
+    "is_bodyweight": false,
+    "difficulty": "Beginner",
+    "form_tips": "Support yourself on bench. Pull dumbbell to hip. Keep elbow close to body. Squeeze at top, control the descent."
+  },
+  {
+    "name": "Barbell Back Squat",
+    "primary_muscle": "Legs",
+    "secondary_muscles": "Core",
+    "equipment": "Barbell",
+    "movement_pattern": "Squat",
+    "is_bodyweight": false,
+    "difficulty": "Intermediate",
+    "form_tips": "Bar on upper back, feet shoulder-width. Descend until thighs parallel to ground. Keep chest up, knees tracking over toes."
+  },
+  {
+    "name": "Barbell Front Squat",
+    "primary_muscle": "Legs",
+    "secondary_muscles": "Core",
+    "equipment": "Barbell",
+    "movement_pattern": "Squat",
+    "is_bodyweight": false,
+    "difficulty": "Advanced",
+    "form_tips": "Bar on front of shoulders, elbows high. Stay upright through descent. More quad emphasis than back squat. Core engagement critical."
+  },
+  {
+    "name": "Leg Press",
+    "primary_muscle": "Legs",
+    "secondary_muscles": null,
+    "equipment": "Machine",
+    "movement_pattern": "Squat",
+    "is_bodyweight": false,
+    "difficulty": "Beginner",
+    "form_tips": "Feet shoulder-width on platform. Lower until 90-degree knee bend. Press through heels. Don't lock knees at top."
+  },
+  {
+    "name": "Romanian Deadlift",
+    "primary_muscle": "Legs",
+    "secondary_muscles": "Back",
+    "equipment": "Barbell",
+    "movement_pattern": "Hinge",
+    "is_bodyweight": false,
+    "difficulty": "Intermediate",
+    "form_tips": "Start standing. Hinge at hips, slight knee bend. Lower bar along shins. Feel hamstring stretch. Return to standing."
+  },
+  {
+    "name": "Leg Curl",
+    "primary_muscle": "Legs",
+    "secondary_muscles": null,
+    "equipment": "Machine",
+    "movement_pattern": null,
+    "is_bodyweight": false,
+    "difficulty": "Beginner",
+    "form_tips": "Lie face down, pad on lower calves. Curl legs toward glutes. Squeeze at top. Lower with control. Isolates hamstrings."
+  },
+  {
+    "name": "Leg Extension",
+    "primary_muscle": "Legs",
+    "secondary_muscles": null,
+    "equipment": "Machine",
+    "movement_pattern": null,
+    "is_bodyweight": false,
+    "difficulty": "Beginner",
+    "form_tips": "Sit with pad on lower shins. Extend legs until straight. Squeeze quads at top. Lower with control. Isolates quadriceps."
+  },
+  {
+    "name": "Walking Lunges",
+    "primary_muscle": "Legs",
+    "secondary_muscles": "Core",
+    "equipment": "Dumbbell",
+    "movement_pattern": "Squat",
+    "is_bodyweight": false,
+    "difficulty": "Beginner",
+    "form_tips": "Step forward, lower back knee toward ground. Front thigh parallel to ground. Push through front heel to next step."
+  },
+  {
+    "name": "Barbell Overhead Press",
+    "primary_muscle": "Shoulders",
+    "secondary_muscles": "Triceps",
+    "equipment": "Barbell",
+    "movement_pattern": "Push",
+    "is_bodyweight": false,
+    "difficulty": "Intermediate",
+    "form_tips": "Bar at shoulder height. Press overhead until arms extended. Keep core tight. Lower under control. Great for shoulder strength."
+  },
+  {
+    "name": "Dumbbell Shoulder Press",
+    "primary_muscle": "Shoulders",
+    "secondary_muscles": "Triceps",
+    "equipment": "Dumbbell",
+    "movement_pattern": "Push",
+    "is_bodyweight": false,
+    "difficulty": "Beginner",
+    "form_tips": "Dumbbells at shoulder height. Press overhead until arms extended. Can be done seated or standing. Control the descent."
+  },
+  {
+    "name": "Lateral Raise",
+    "primary_muscle": "Shoulders",
+    "secondary_muscles": null,
+    "equipment": "Dumbbell",
+    "movement_pattern": null,
+    "is_bodyweight": false,
+    "difficulty": "Beginner",
+    "form_tips": "Arms at sides, slight bend in elbows. Raise dumbbells to shoulder height. Lead with elbows. Lower with control."
+  },
+  {
+    "name": "Face Pulls",
+    "primary_muscle": "Shoulders",
+    "secondary_muscles": "Back",
+    "equipment": "Cable",
+    "movement_pattern": "Pull",
+    "is_bodyweight": false,
+    "difficulty": "Beginner",
+    "form_tips": "Cable at face height with rope. Pull toward face, splitting rope. External rotation at end. Great for rear delts and posture."
+  },
+  {
+    "name": "Barbell Bicep Curl",
+    "primary_muscle": "Arms",
+    "secondary_muscles": null,
+    "equipment": "Barbell",
+    "movement_pattern": null,
+    "is_bodyweight": false,
+    "difficulty": "Beginner",
+    "form_tips": "Stand with bar at thighs. Curl bar toward shoulders. Keep elbows stationary. Squeeze at top. Lower with control."
+  },
+  {
+    "name": "Dumbbell Bicep Curl",
+    "primary_muscle": "Arms",
+    "secondary_muscles": null,
+    "equipment": "Dumbbell",
+    "movement_pattern": null,
+    "is_bodyweight": false,
+    "difficulty": "Beginner",
+    "form_tips": "Arms at sides. Curl dumbbells toward shoulders. Can alternate or do together. Keep elbows still. Control the negative."
+  },
+  {
+    "name": "Hammer Curl",
+    "primary_muscle": "Arms",
+    "secondary_muscles": null,
+    "equipment": "Dumbbell",
+    "movement_pattern": null,
+    "is_bodyweight": false,
+    "difficulty": "Beginner",
+    "form_tips": "Neutral grip (palms facing each other). Curl dumbbells toward shoulders. Targets brachialis. Keep elbows stationary."
+  },
+  {
+    "name": "Tricep Dips",
+    "primary_muscle": "Arms",
+    "secondary_muscles": "Chest,Shoulders",
+    "equipment": "Bodyweight",
+    "movement_pattern": "Push",
+    "is_bodyweight": true,
+    "difficulty": "Intermediate",
+    "form_tips": "Grip parallel bars. Lower body by bending elbows. Go until upper arms parallel to ground. Push back up to start."
+  },
+  {
+    "name": "Cable Tricep Pushdown",
+    "primary_muscle": "Arms",
+    "secondary_muscles": null,
+    "equipment": "Cable",
+    "movement_pattern": "Push",
+    "is_bodyweight": false,
+    "difficulty": "Beginner",
+    "form_tips": "High cable with bar or rope. Elbows at sides. Push down until arms straight. Squeeze triceps. Return with control."
+  },
+  {
+    "name": "Skull Crushers",
+    "primary_muscle": "Arms",
+    "secondary_muscles": null,
+    "equipment": "Barbell",
+    "movement_pattern": null,
+    "is_bodyweight": false,
+    "difficulty": "Intermediate",
+    "form_tips": "Lie on bench, bar above head. Lower bar toward forehead by bending elbows. Keep upper arms stationary. Extend back to start."
+  },
+  {
+    "name": "Plank",
+    "primary_muscle": "Core",
+    "secondary_muscles": null,
+    "equipment": "Bodyweight",
+    "movement_pattern": null,
+    "is_bodyweight": true,
+    "difficulty": "Beginner",
+    "form_tips": "Forearms on ground, body in straight line. Hold position. Keep core engaged, don't let hips sag. Breathe normally."
+  },
+  {
+    "name": "Crunches",
+    "primary_muscle": "Core",
+    "secondary_muscles": null,
+    "equipment": "Bodyweight",
+    "movement_pattern": null,
+    "is_bodyweight": true,
+    "difficulty": "Beginner",
+    "form_tips": "Lie on back, knees bent. Lift shoulders off ground. Focus on contracting abs, not pulling on neck. Lower with control."
+  },
+  {
+    "name": "Hanging Leg Raise",
+    "primary_muscle": "Core",
+    "secondary_muscles": null,
+    "equipment": "Bodyweight",
+    "movement_pattern": null,
+    "is_bodyweight": true,
+    "difficulty": "Intermediate",
+    "form_tips": "Hang from pull-up bar. Raise legs until parallel to ground. Keep legs straight or bent at knees. Lower with control."
+  },
+  {
+    "name": "Russian Twist",
+    "primary_muscle": "Core",
+    "secondary_muscles": null,
+    "equipment": "Dumbbell",
+    "movement_pattern": "Rotation",
+    "is_bodyweight": false,
+    "difficulty": "Beginner",
+    "form_tips": "Sit with knees bent, lean back slightly. Hold weight at chest. Rotate torso side to side. Keep core engaged throughout."
+  },
+  {
+    "name": "Cable Wood Chop",
+    "primary_muscle": "Core",
+    "secondary_muscles": null,
+    "equipment": "Cable",
+    "movement_pattern": "Rotation",
+    "is_bodyweight": false,
+    "difficulty": "Intermediate",
+    "form_tips": "Stand sideways to cable. Pull cable diagonally across body. Rotate through core. Control the return. Switch sides."
+  },
+  {
+    "name": "Farmer's Walk",
+    "primary_muscle": "Full Body",
+    "secondary_muscles": "Core,Arms",
+    "equipment": "Dumbbell",
+    "movement_pattern": "Carry",
+    "is_bodyweight": false,
+    "difficulty": "Beginner",
+    "form_tips": "Hold heavy dumbbells at sides. Walk with good posture. Keep shoulders back and core tight. Great for grip and conditioning."
+  },
+  {
+    "name": "Burpees",
+    "primary_muscle": "Full Body",
+    "secondary_muscles": null,
+    "equipment": "Bodyweight",
+    "movement_pattern": null,
+    "is_bodyweight": true,
+    "difficulty": "Intermediate",
+    "form_tips": "Start standing. Drop to push-up position. Perform push-up. Jump feet to hands. Explosive jump up. Full body conditioning."
+  },
+  {
+    "name": "Kettlebell Swing",
+    "primary_muscle": "Full Body",
+    "secondary_muscles": "Legs,Back,Core",
+    "equipment": "Kettlebell",
+    "movement_pattern": "Hinge",
+    "is_bodyweight": false,
+    "difficulty": "Intermediate",
+    "form_tips": "Hinge at hips, swing kettlebell between legs. Explosively extend hips to swing kettlebell to shoulder height. Power from hips, not arms."
+  }
+]
