@@ -68,6 +68,22 @@ class WorkoutService {
   }
 
   /**
+   * Get workouts with pagination and exercise counts
+   */
+  async getAllPaged(limit: number, offset: number): Promise<(Workout & { exercise_count: number })[]> {
+    const db = databaseService.getDatabase();
+    const sql = `
+      SELECT w.*, (
+        SELECT COUNT(*) FROM workout_exercises we WHERE we.workout_id = w.id
+      ) as exercise_count
+      FROM workouts w
+      ORDER BY w.started_at DESC
+      LIMIT ? OFFSET ?
+    `;
+    return await db.getAllAsync<any>(sql, [limit, offset]);
+  }
+
+  /**
    * Get active (in-progress) workout
    */
   async getActive(): Promise<Workout | null> {
