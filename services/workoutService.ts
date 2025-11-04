@@ -386,6 +386,30 @@ class WorkoutService {
   }
 
   /**
+   * Get all sets for a given exercise across completed workouts, joined with workout metadata
+   * Useful for analytics per exercise.
+   */
+  async getExerciseSetsWithWorkouts(exerciseId: number): Promise<Array<{
+    workout_id: number;
+    started_at: number;
+    reps: number;
+    weight: number;
+    is_warmup: number;
+    is_completed: number;
+  }>> {
+    const db = databaseService.getDatabase();
+    const sql = `
+      SELECT w.id as workout_id, w.started_at, s.reps, s.weight, s.is_warmup, s.is_completed
+      FROM sets s
+      JOIN workout_exercises we ON s.workout_exercise_id = we.id
+      JOIN workouts w ON we.workout_id = w.id
+      WHERE we.exercise_id = ? AND w.status = 'completed'
+      ORDER BY w.started_at ASC
+    `;
+    return await db.getAllAsync<any>(sql, [exerciseId]);
+  }
+
+  /**
    * Recalculate workout totals
    */
   async recalculateTotals(workoutId: number): Promise<void> {
