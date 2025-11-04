@@ -5,6 +5,7 @@ import { workoutService } from '../services/workoutService';
 import { exerciseService } from '../services/exerciseService';
 import { prService } from '../services/prService';
 import { Workout, WorkoutExercise, Set, Exercise } from '../types/database';
+import { useSettingsStore } from './settingsStore';
 import { WorkoutExerciseWithDetails } from '../types/workout';
 
 interface WorkoutState {
@@ -372,9 +373,13 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
       const newCompleted = set.is_completed === 1 ? 0 : 1;
       await get().updateSet(setId, { is_completed: newCompleted });
 
-      // Auto-start rest timer if completed
+      // Auto-start rest timer if completed and setting enabled
       if (newCompleted === 1) {
-        get().startRestTimer();
+        const settings = useSettingsStore.getState();
+        if (settings.autoStartRestTimer) {
+          const dur = settings.restTimerDefault || get().restDuration;
+          get().startRestTimer(dur);
+        }
       }
     } catch (error) {
       console.error('Failed to toggle set complete:', error);
