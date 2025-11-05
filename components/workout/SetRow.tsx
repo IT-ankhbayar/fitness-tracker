@@ -6,6 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { Set } from '../../types/database';
 import { COLORS } from '../../utils/constants';
 import { useSettingsStore } from '../../store/settingsStore';
+import * as Haptics from 'expo-haptics';
+import Animated, { FadeInDown, FadeOutUp, Layout as AnimatedLayout } from 'react-native-reanimated';
 
 interface SetRowProps {
   set: Set;
@@ -57,12 +59,15 @@ export function SetRow({
   const isWarmup = set.is_warmup === 1;
 
   return (
-    <View
+    <Animated.View
       className="flex-row items-center py-3 border-b"
       style={{
         borderBottomColor: COLORS.border,
         opacity: isCompleted ? 0.6 : 1,
       }}
+      entering={FadeInDown.springify().damping(18)}
+      exiting={FadeOutUp.damping(16)}
+      layout={AnimatedLayout.springify().damping(20)}
     >
       {/* Set Number */}
       <View className="w-12">
@@ -112,11 +117,13 @@ export function SetRow({
       {/* Complete Checkbox */}
       <Pressable
         onPress={onToggleComplete}
-        hitSlop={8}
+        hitSlop={10}
         className="w-10 h-10 rounded-full items-center justify-center mx-2"
         style={{
           backgroundColor: isCompleted ? COLORS.accent.secondary : COLORS.background.secondary,
         }}
+        accessibilityRole="button"
+        accessibilityLabel={`${isCompleted ? 'Mark set incomplete' : 'Mark set complete'}`}
       >
         {isCompleted && (
           <Ionicons name="checkmark" size={20} color={COLORS.background.primary} />
@@ -124,9 +131,19 @@ export function SetRow({
       </Pressable>
 
       {/* Delete Button */}
-      <Pressable onPress={onDelete} hitSlop={8} className="ml-2">
+      <Pressable
+        onPress={async () => {
+          // Subtle impact for delete
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
+          onDelete();
+        }}
+        hitSlop={10}
+        className="ml-2"
+        accessibilityRole="button"
+        accessibilityLabel="Delete set"
+      >
         <Ionicons name="trash-outline" size={20} color={COLORS.text.tertiary} />
       </Pressable>
-    </View>
+    </Animated.View>
   );
 }

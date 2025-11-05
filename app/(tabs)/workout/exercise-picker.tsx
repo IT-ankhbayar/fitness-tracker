@@ -138,7 +138,12 @@ export default function ExercisePickerScreen() {
               {filteredExercises.length} exercises
             </Text>
           </View>
-          <Pressable onPress={() => router.back()} hitSlop={8}>
+          <Pressable
+            onPress={() => router.back()}
+            hitSlop={10}
+            accessibilityRole="button"
+            accessibilityLabel="Close exercise picker"
+          >
             <Ionicons name="close" size={28} color={COLORS.text.primary} />
           </Pressable>
         </View>
@@ -173,6 +178,8 @@ export default function ExercisePickerScreen() {
                   ? COLORS.accent.primary
                   : COLORS.background.secondary,
               }}
+              accessibilityRole="button"
+              accessibilityLabel={`Toggle muscle filters ${selectedMuscles.length > 0 ? `(${selectedMuscles.length} selected)` : ''}`}
             >
               <Ionicons
                 name="fitness"
@@ -197,6 +204,8 @@ export default function ExercisePickerScreen() {
                   ? COLORS.accent.primary
                   : COLORS.background.secondary,
               }}
+              accessibilityRole="button"
+              accessibilityLabel={`Toggle equipment filters ${selectedEquipment.length > 0 ? `(${selectedEquipment.length} selected)` : ''}`}
             >
               <Ionicons
                 name="barbell"
@@ -214,7 +223,12 @@ export default function ExercisePickerScreen() {
             </Pressable>
 
             {hasActiveFilters && (
-              <Pressable onPress={handleClearFilters} hitSlop={8}>
+              <Pressable
+                onPress={handleClearFilters}
+                hitSlop={10}
+                accessibilityRole="button"
+                accessibilityLabel="Clear all filters"
+              >
                 <Text style={{ color: COLORS.accent.secondary }} className="font-medium">
                   Clear
                 </Text>
@@ -291,6 +305,11 @@ export default function ExercisePickerScreen() {
               />
             )}
             contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 100 }}
+            initialNumToRender={12}
+            maxToRenderPerBatch={12}
+            windowSize={12}
+            removeClippedSubviews
+            keyboardShouldPersistTaps="handled"
           />
         )}
 
@@ -304,7 +323,12 @@ export default function ExercisePickerScreen() {
               <Text className="text-white text-base font-medium">
                 {selectedExercises.length} exercise{selectedExercises.length !== 1 ? 's' : ''} selected
               </Text>
-              <Pressable onPress={() => setSelectedExercises([])} hitSlop={8}>
+              <Pressable
+                onPress={() => setSelectedExercises([])}
+                hitSlop={10}
+                accessibilityRole="button"
+                accessibilityLabel="Clear selected exercises"
+              >
                 <Text style={{ color: COLORS.accent.secondary }} className="font-medium">
                   Clear
                 </Text>
@@ -314,6 +338,8 @@ export default function ExercisePickerScreen() {
               onPress={handleAddExercises}
               className="py-4 rounded-full items-center"
               style={{ backgroundColor: COLORS.accent.primary }}
+              accessibilityRole="button"
+              accessibilityLabel={mode === 'plan' ? 'Add selected exercises to plan' : 'Add selected exercises to workout'}
             >
               <Text className="text-black text-lg font-bold">
                 {mode === 'plan' ? 'Add to Plan' : 'Add to Workout'}

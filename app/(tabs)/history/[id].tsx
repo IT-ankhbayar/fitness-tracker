@@ -1,6 +1,6 @@
 // Workout detail screen - summary with exercise accordion and actions
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, router } from 'expo-router';
@@ -11,6 +11,8 @@ import { useHistoryStore } from '../../../store/historyStore';
 import { COLORS } from '../../../utils/constants';
 import { formatDate, formatDuration, formatWeightClean } from '../../../utils/formatters';
 import { Workout, WorkoutExercise, Set } from '../../../types/database';
+import { EmptyState } from '../../../components/feedback/EmptyState';
+import { Button } from '../../../components/Button';
 
 interface ExerciseDetail {
     id: number; // workout_exercise id
@@ -24,44 +26,48 @@ export default function HistoryDetailScreen() {
     const workoutId = Number(id);
 
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [workout, setWorkout] = useState<Workout | null>(null);
     const [exerciseDetails, setExerciseDetails] = useState<ExerciseDetail[]>([]);
     const [expanded, setExpanded] = useState<Record<number, boolean>>({});
 
     // Units are read via useSettingsUnit() when needed
 
-    useEffect(() => {
+    const loadDetail = useCallback(async () => {
         let active = true;
-        const load = async () => {
-            try {
-                const w = await workoutService.getById(workoutId);
-                if (!active) return;
-                if (!w) {
-                    router.back();
-                    return;
-                }
-                setWorkout(w);
-
-                const wes = await workoutService.getWorkoutExercises(workoutId);
-                const details: ExerciseDetail[] = [];
-                for (const we of wes) {
-                    const ex = await exerciseService.getById(we.exercise_id);
-                    const sets = await workoutService.getSets(we.id);
-                    details.push({ id: we.id, exercise_id: we.exercise_id, name: ex?.name || 'Exercise', sets });
-                }
-                if (!active) return;
-                setExerciseDetails(details);
-            } catch (e) {
-                console.error('Failed to load workout detail', e);
-            } finally {
-                if (active) setLoading(false);
+        setLoading(true);
+        setError(null);
+        try {
+            const w = await workoutService.getById(workoutId);
+            if (!active) return;
+            if (!w) {
+                setWorkout(null);
+                setExerciseDetails([]);
+                return;
             }
-        };
-        load();
-        return () => {
-            active = false;
-        };
+            setWorkout(w);
+
+            const wes = await workoutService.getWorkoutExercises(workoutId);
+            const details: ExerciseDetail[] = [];
+            for (const we of wes) {
+                const ex = await exerciseService.getById(we.exercise_id);
+                const sets = await workoutService.getSets(we.id);
+                details.push({ id: we.id, exercise_id: we.exercise_id, name: ex?.name || 'Exercise', sets });
+            }
+            if (!active) return;
+            setExerciseDetails(details);
+        } catch (e: any) {
+            console.error('Failed to load workout detail', e);
+            setError(e?.message || 'Failed to load workout');
+        } finally {
+            if (active) setLoading(false);
+        }
+        return () => { active = false; };
     }, [workoutId]);
+
+    useEffect(() => {
+        loadDetail();
+    }, [loadDetail]);
 
     const totals = useMemo(() => {
         if (!exerciseDetails.length) return { completedSets: 0, totalReps: 0, totalVolume: 0 };
@@ -119,7 +125,26 @@ export default function HistoryDetailScreen() {
         );
     }
 
-    if (!workout) return null;
+    if (!workout) {
+        return (
+            <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background.primary }}>
+                <View className="flex-1 justify-center px-6">
+                    <EmptyState
+                        icon={error ? 'alert-circle-outline' : 'calendar-outline'}
+                        title={error ? 'Unable to load workout' : 'Workout not found'}
+                        message={error ? 'Please try again.' : 'This workout may have been deleted.'}
+                        action={
+                            error ? (
+                                <Button title="Retry" onPress={loadDetail} accessibilityRole="button" accessibilityLabel="Retry loading workout" />
+                            ) : (
+                                <Button title="Go Back" onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back" />
+                            )
+                        }
+                    />
+                </View>
+            </SafeAreaView>
+        );
+    }
 
     const minutes = workout.duration ? Math.floor(workout.duration / 60) : 0;
 
@@ -182,6 +207,9 @@ export default function HistoryDetailScreen() {
                                 <Pressable
                                     onPress={() => setExpanded((prev) => ({ ...prev, [d.id]: !prev[d.id] }))}
                                     className="flex-row items-center justify-between p-4"
+                                    accessibilityRole="button"
+                                    accessibilityLabel={`${isOpen ? 'Collapse' : 'Expand'} ${d.name} sets`}
+                                    accessibilityState={{ expanded: isOpen }}
                                 >
                                     <View>
                                         <Text className="text-white font-semibold">{d.name}</Text>
@@ -222,6 +250,8 @@ export default function HistoryDetailScreen() {
                             onPress={handleDelete}
                             className="flex-1 py-4 rounded-full mr-2 items-center"
                             style={{ backgroundColor: COLORS.background.tertiary }}
+                            accessibilityRole="button"
+                            accessibilityLabel="Delete workout"
                         >
                             <Text className="text-white font-semibold">Delete</Text>
                         </Pressable>
@@ -229,6 +259,8 @@ export default function HistoryDetailScreen() {
                             onPress={handleRepeat}
                             className="flex-1 py-4 rounded-full ml-2 items-center"
                             style={{ backgroundColor: COLORS.accent.primary }}
+                            accessibilityRole="button"
+                            accessibilityLabel="Repeat workout"
                         >
                             <Text className="text-black font-bold">Repeat Workout</Text>
                         </Pressable>

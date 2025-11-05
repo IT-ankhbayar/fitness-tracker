@@ -1,6 +1,6 @@
 // Exercise progress detail screen
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { View, Text, ScrollView, ActivityIndicator, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, router } from 'expo-router';
@@ -13,6 +13,8 @@ import { Exercise, PersonalRecord } from '../../../types/database';
 import { formatRelativeTime } from '../../../utils/formatters';
 import { calculate1RM } from '../../../utils/calculations';
 import { useSettingsStore } from '../../../store/settingsStore';
+import { EmptyState } from '../../../components/feedback/EmptyState';
+import { Button } from '../../../components/Button';
 
 export default function ExerciseProgressScreen() {
     const { exercise } = useLocalSearchParams<{ exercise: string }>();
@@ -20,6 +22,7 @@ export default function ExerciseProgressScreen() {
 
     const [loading, setLoading] = useState(true);
     const [ex, setEx] = useState<Exercise | null>(null);
+    const [error, setError] = useState<string | null>(null);
     const [stats, setStats] = useState<{
         totalWorkouts: number;
         totalSets: number;
@@ -37,62 +40,64 @@ export default function ExerciseProgressScreen() {
     }>>([]);
     const unit = useSettingsStore((s) => s.unitPreference);
 
-    useEffect(() => {
+    const loadAll = useCallback(async () => {
         let active = true;
-        const load = async () => {
-            try {
-                const exerciseData = await exerciseService.getById(exerciseId);
-                if (!active) return;
-                setEx(exerciseData);
+        setLoading(true);
+        setError(null);
+        try {
+            const exerciseData = await exerciseService.getById(exerciseId);
+            if (!active) return;
+            setEx(exerciseData);
 
-                const statData = await exerciseService.getWithStats(exerciseId);
-                if (!active) return;
-                setStats(statData ? {
-                    totalWorkouts: statData.totalWorkouts,
-                    totalSets: statData.totalSets,
-                    totalVolume: statData.totalVolume,
-                } : { totalWorkouts: 0, totalSets: 0, totalVolume: 0 });
+            const statData = await exerciseService.getWithStats(exerciseId);
+            if (!active) return;
+            setStats(statData ? {
+                totalWorkouts: statData.totalWorkouts,
+                totalSets: statData.totalSets,
+                totalVolume: statData.totalVolume,
+            } : { totalWorkouts: 0, totalSets: 0, totalVolume: 0 });
 
-                const recentPrs = await prService.getByExercise(exerciseId);
-                if (!active) return;
-                setPrs(recentPrs);
+            const recentPrs = await prService.getByExercise(exerciseId);
+            if (!active) return;
+            setPrs(recentPrs);
 
-                // Load sets grouped by workout to compute per-session metrics
-                const rows = await workoutService.getExerciseSetsWithWorkouts(exerciseId);
-                if (!active) return;
-                const byWorkout = new Map<number, { started_at: number; sets: Array<{ reps: number; weight: number; is_warmup: number; is_completed: number }> }>();
-                for (const r of rows) {
-                    if (!byWorkout.has(r.workout_id)) {
-                        byWorkout.set(r.workout_id, { started_at: r.started_at, sets: [] });
-                    }
-                    byWorkout.get(r.workout_id)!.sets.push({ reps: r.reps, weight: r.weight, is_warmup: r.is_warmup, is_completed: r.is_completed });
+            // Load sets grouped by workout to compute per-session metrics
+            const rows = await workoutService.getExerciseSetsWithWorkouts(exerciseId);
+            if (!active) return;
+            const byWorkout = new Map<number, { started_at: number; sets: Array<{ reps: number; weight: number; is_warmup: number; is_completed: number }> }>();
+            for (const r of rows) {
+                if (!byWorkout.has(r.workout_id)) {
+                    byWorkout.set(r.workout_id, { started_at: r.started_at, sets: [] });
                 }
-                const metrics: Array<{ workout_id: number; started_at: number; best1RM: number; topSet: number; volume: number; setCount: number }> = [];
-                for (const [workout_id, { started_at, sets }] of byWorkout) {
-                    const comp = sets.filter((s) => s.is_completed === 1 && s.is_warmup === 0);
-                    let best1RM = 0;
-                    let topSet = 0;
-                    let volume = 0;
-                    for (const s of comp) {
-                        const est = calculate1RM(s.weight, s.reps);
-                        if (est > best1RM) best1RM = est;
-                        if (s.weight > topSet) topSet = s.weight;
-                        volume += s.weight * s.reps;
-                    }
-                    metrics.push({ workout_id, started_at, best1RM, topSet, volume, setCount: comp.length });
-                }
-                // sort by date ascending for chart
-                metrics.sort((a, b) => a.started_at - b.started_at);
-                setSessionMetrics(metrics);
-            } catch (e) {
-                console.error('Failed to load exercise progress', e);
-            } finally {
-                if (active) setLoading(false);
+                byWorkout.get(r.workout_id)!.sets.push({ reps: r.reps, weight: r.weight, is_warmup: r.is_warmup, is_completed: r.is_completed });
             }
-        };
-        load();
+            const metrics: Array<{ workout_id: number; started_at: number; best1RM: number; topSet: number; volume: number; setCount: number }> = [];
+            for (const [workout_id, { started_at, sets }] of byWorkout) {
+                const comp = sets.filter((s) => s.is_completed === 1 && s.is_warmup === 0);
+                let best1RM = 0;
+                let topSet = 0;
+                let volume = 0;
+                for (const s of comp) {
+                    const est = calculate1RM(s.weight, s.reps);
+                    if (est > best1RM) best1RM = est;
+                    if (s.weight > topSet) topSet = s.weight;
+                    volume += s.weight * s.reps;
+                }
+                metrics.push({ workout_id, started_at, best1RM, topSet, volume, setCount: comp.length });
+            }
+            // sort by date ascending for chart
+            metrics.sort((a, b) => a.started_at - b.started_at);
+            setSessionMetrics(metrics);
+        } catch (e: any) {
+            console.error('Failed to load exercise progress', e);
+            setError(e?.message || 'Failed to load exercise progress');
+        } finally {
+            if (active) setLoading(false);
+        }
         return () => { active = false; };
     }, [exerciseId]);
+
+    useEffect(() => { loadAll(); }, [loadAll]);
 
     const chartSeries = useMemo(() => {
         if (selectedMetric === 'Frequency') {
@@ -133,10 +138,30 @@ export default function ExerciseProgressScreen() {
         );
     }
 
+    if (error) {
+        return (
+            <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background.primary }}>
+                <View className="flex-1 justify-center px-6">
+                    <EmptyState
+                        icon="alert-circle-outline"
+                        title="Unable to load"
+                        message="Please try again."
+                        action={<Button title="Retry" onPress={loadAll} accessibilityRole="button" accessibilityLabel="Retry loading exercise progress" />}
+                    />
+                </View>
+            </SafeAreaView>
+        );
+    }
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background.primary }}>
             <View className="flex-row items-center px-4 py-3" style={{ borderBottomWidth: 1, borderBottomColor: COLORS.border }}>
-                <Pressable onPress={() => router.back()} className="p-2 mr-2">
+                <Pressable
+                    onPress={() => router.back()}
+                    className="p-2 mr-2"
+                    accessibilityRole="button"
+                    accessibilityLabel="Go back"
+                >
                     <Ionicons name="arrow-back" size={22} color={COLORS.text.secondary} />
                 </Pressable>
                 <Text className="text-2xl font-bold text-white" numberOfLines={1}>{ex?.name || 'Exercise'}</Text>
@@ -164,7 +189,15 @@ export default function ExerciseProgressScreen() {
                     {(['1RM', 'TopSet', 'Volume', 'Frequency'] as const).map((m) => {
                         const active = selectedMetric === m;
                         return (
-                            <Pressable key={m} onPress={() => setSelectedMetric(m)} className={`px-3 py-2 mr-2 rounded-full ${active ? '' : ''}`} style={{ backgroundColor: active ? COLORS.accent.primary : COLORS.background.secondary }}>
+                            <Pressable
+                                key={m}
+                                onPress={() => setSelectedMetric(m)}
+                                className={`px-3 py-2 mr-2 rounded-full ${active ? '' : ''}`}
+                                style={{ backgroundColor: active ? COLORS.accent.primary : COLORS.background.secondary, minHeight: 44, justifyContent: 'center' }}
+                                accessibilityRole="button"
+                                accessibilityState={{ selected: active }}
+                                accessibilityLabel={`Show ${m} trend`}
+                            >
                                 <Text className={active ? 'text-black font-semibold' : 'text-white'}>{m}</Text>
                             </Pressable>
                         );
@@ -208,7 +241,14 @@ export default function ExerciseProgressScreen() {
                             .map((s) => {
                                 const value = selectedMetric === '1RM' ? `${s.best1RM.toFixed(1)} ${unit}` : selectedMetric === 'TopSet' ? `${s.topSet.toFixed(1)} ${unit}` : selectedMetric === 'Volume' ? `${Math.round(s.volume)}` : `${s.setCount} sets`;
                                 return (
-                                    <Pressable key={s.workout_id} className="px-6 py-4 border-b" style={{ borderBottomColor: COLORS.border }} onPress={() => router.push(`/history/${s.workout_id}` as any)}>
+                                    <Pressable
+                                        key={s.workout_id}
+                                        className="px-6 py-4 border-b"
+                                        style={{ borderBottomColor: COLORS.border }}
+                                        onPress={() => router.push(`/history/${s.workout_id}` as any)}
+                                        accessibilityRole="button"
+                                        accessibilityLabel={`Open workout on ${new Date(s.started_at).toLocaleDateString()}`}
+                                    >
                                         <View className="flex-row items-center justify-between">
                                             <View>
                                                 <Text className="text-white font-semibold">{new Date(s.started_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</Text>

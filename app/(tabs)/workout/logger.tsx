@@ -1,7 +1,7 @@
 // Workout Logger Screen - Active workout tracking
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Pressable, Text, Alert } from 'react-native';
+import { View, Pressable, Text, Alert, LayoutAnimation, Platform, UIManager } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,6 +9,7 @@ import { useWorkoutStore } from '../../../store/workoutStore';
 import { WorkoutHeader } from '../../../components/workout/WorkoutHeader';
 import { ExerciseSection } from '../../../components/workout/ExerciseSection';
 import { ExerciseInfoSheet } from '../../../components/sheets/ExerciseInfoSheet';
+import { RestTimerSheet } from '../../../components/sheets/RestTimerSheet';
 import { NotesSheet } from '../../../components/sheets/NotesSheet';
 import { EmptyState } from '../../../components/feedback/EmptyState';
 import { Exercise, Set } from '../../../types/database';
@@ -21,6 +22,8 @@ export default function LoggerScreen() {
     activeWorkout,
     workoutExercises,
     sessionElapsed,
+    restRemaining,
+    restTimerActive,
     updateSet,
     toggleSetComplete,
     deleteSet,
@@ -35,6 +38,7 @@ export default function LoggerScreen() {
   const [notesOpen, setNotesOpen] = useState(false);
   const [notesDraft, setNotesDraft] = useState<string>('');
   const [orderedExercises, setOrderedExercises] = useState<WorkoutExerciseWithDetails[]>([]);
+  const [restOpen, setRestOpen] = useState(false);
 
   // Redirect if no active workout
   useEffect(() => {
@@ -42,6 +46,13 @@ export default function LoggerScreen() {
       router.back();
     }
   }, [activeWorkout]);
+
+  // Enable LayoutAnimation on Android (fallback; Reanimated handles row transitions)
+  useEffect(() => {
+    if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+  }, []);
 
   const handleFinish = () => {
     if (workoutExercises.length === 0) {
@@ -110,10 +121,14 @@ export default function LoggerScreen() {
   };
 
   const handleDeleteSet = async (setId: number, workoutExerciseId: number) => {
+    // Fallback layout animation; primary animations handled by Reanimated exiting
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     await deleteSet(setId, workoutExerciseId);
   };
 
   const handleAddSet = async (workoutExerciseId: number) => {
+    // Fallback layout animation; primary animations handled by Reanimated entering
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     await addSet(workoutExerciseId);
   };
 
@@ -185,6 +200,9 @@ export default function LoggerScreen() {
           onFinish={handleFinish}
           onCancel={handleCancel}
           onOpenNotes={handleOpenNotes}
+          restRemaining={restRemaining}
+          restTimerActive={restTimerActive}
+          onOpenRestTimer={() => setRestOpen(true)}
         />
 
         {/* Exercise List */}
@@ -220,10 +238,23 @@ export default function LoggerScreen() {
             onPress={handleAddExercises}
             className="absolute bottom-6 right-6 w-14 h-14 rounded-full items-center justify-center shadow-lg"
             style={{ backgroundColor: COLORS.accent.primary }}
+            accessibilityRole="button"
+            accessibilityLabel="Add exercises"
           >
             <Ionicons name="add" size={32} color={COLORS.background.primary} />
           </Pressable>
         )}
+
+        {/* Floating Rest Timer Button */}
+        <Pressable
+          onPress={() => setRestOpen(true)}
+          className="absolute bottom-6 left-6 w-14 h-14 rounded-full items-center justify-center shadow-lg"
+          style={{ backgroundColor: COLORS.background.secondary }}
+          accessibilityRole="button"
+          accessibilityLabel="Open rest timer"
+        >
+          <Ionicons name="timer-outline" size={28} color={COLORS.text.primary} />
+        </Pressable>
 
         {/* Exercise Info Sheet */}
         <ExerciseInfoSheet
@@ -239,6 +270,9 @@ export default function LoggerScreen() {
           onSave={(text) => useWorkoutStore.getState().updateWorkoutNotes(text)}
           onClose={() => setNotesOpen(false)}
         />
+
+        {/* Rest Timer Sheet */}
+        <RestTimerSheet visible={restOpen} onClose={() => setRestOpen(false)} />
       </View>
     </SafeAreaView>
   );

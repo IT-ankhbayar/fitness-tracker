@@ -1,6 +1,7 @@
 // Workout store - Manages active workout state
 
 import { create } from 'zustand';
+import * as Haptics from 'expo-haptics';
 import { workoutService } from '../services/workoutService';
 import { exerciseService } from '../services/exerciseService';
 import { prService } from '../services/prService';
@@ -51,6 +52,8 @@ interface WorkoutState {
   startRestTimer: (duration?: number) => void;
   stopRestTimer: () => void;
   tickRestTimer: () => void;
+  pauseRestTimer: () => void;
+  resumeRestTimer: () => void;
 
   // Utilities
   recalculateTotals: () => Promise<void>;
@@ -375,6 +378,8 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
 
       // Auto-start rest timer if completed and setting enabled
       if (newCompleted === 1) {
+        // Success haptic on set completion
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
         const settings = useSettingsStore.getState();
         if (settings.autoStartRestTimer) {
           const dur = settings.restTimerDefault || get().restDuration;
@@ -464,6 +469,30 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
 
       return { restRemaining: newRemaining };
     });
+  },
+
+  /**
+   * Pause rest timer (keep remaining time)
+   */
+  pauseRestTimer: () => {
+    if (restTimerInterval) {
+      clearInterval(restTimerInterval);
+      restTimerInterval = null;
+    }
+    set({ restTimerActive: false });
+  },
+
+  /**
+   * Resume rest timer if there is remaining time
+   */
+  resumeRestTimer: () => {
+    const { restRemaining, restTimerActive } = get();
+    if (restTimerActive || restRemaining <= 0) return;
+
+    set({ restTimerActive: true });
+    restTimerInterval = setInterval(() => {
+      get().tickRestTimer();
+    }, 1000);
   },
 
   /**

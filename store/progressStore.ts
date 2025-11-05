@@ -22,6 +22,7 @@ export interface TopExerciseItem {
 
 interface ProgressState {
   loading: boolean;
+  error?: string;
 
   weeklyTarget: number;
   weeklyCount: number;
@@ -53,6 +54,7 @@ function formatWeekLabel(ts: number): string {
 
 export const useProgressStore = create<ProgressState>((set, get) => ({
   loading: false,
+  error: undefined,
 
   weeklyTarget: 0,
   weeklyCount: 0,
@@ -65,7 +67,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
   load: async (opts) => {
     const weeks = opts?.weeks ?? 8;
-    set({ loading: true });
+    set({ loading: true, error: undefined });
 
     try {
       // Settings
@@ -116,6 +118,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
       set({
         loading: false,
+        error: undefined,
         weeklyTarget,
         weeklyCount,
         consistencyPct,
@@ -126,7 +129,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       });
     } catch (e) {
       console.error('Failed to load progress metrics:', e);
-      set({ loading: false });
+      set({ loading: false, error: e instanceof Error ? e.message : 'Failed to load progress' });
     }
   },
 

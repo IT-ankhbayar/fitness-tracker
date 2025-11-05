@@ -14,7 +14,7 @@ interface WorkoutCardProps {
     onPress?: () => void;
 }
 
-export function WorkoutCard({ workout, exerciseCount, onPress }: WorkoutCardProps) {
+function WorkoutCardInner({ workout, exerciseCount, onPress }: WorkoutCardProps) {
     const unit = useSettingsStore((s) => s.unitPreference);
 
     const minutes = workout.duration ? Math.floor(workout.duration / 60) : 0;
@@ -24,6 +24,8 @@ export function WorkoutCard({ workout, exerciseCount, onPress }: WorkoutCardProp
             onPress={onPress}
             className="p-4 rounded-2xl mb-3 flex-row items-center"
             style={{ backgroundColor: COLORS.background.secondary }}
+            accessibilityRole="button"
+            accessibilityLabel={`Open workout from ${formatDate(workout.started_at, 'medium')}`}
         >
             <View className="flex-1">
                 <Text className="text-white text-base font-semibold">
@@ -40,3 +42,5 @@ export function WorkoutCard({ workout, exerciseCount, onPress }: WorkoutCardProp
         </Pressable>
     );
 }
+
+export const WorkoutCard = React.memo(WorkoutCardInner);

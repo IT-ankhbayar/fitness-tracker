@@ -16,6 +16,7 @@ interface HistoryState {
   hasMore: boolean;
   page: number;
   pageSize: number;
+  error?: string;
 
   loadInitial: () => Promise<void>;
   loadMore: () => Promise<void>;
@@ -44,7 +45,7 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
 
   loadInitial: async () => {
     if (get().isLoading) return;
-    set({ isLoading: true, page: 0, hasMore: true });
+    set({ isLoading: true, page: 0, hasMore: true, error: undefined });
     try {
       const { pageSize } = get();
       const rows = await workoutService.getAllPaged(pageSize, 0);
@@ -56,7 +57,7 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
       });
     } catch (e) {
       console.error('Failed to load history:', e);
-      set({ isLoading: false });
+      set({ isLoading: false, error: e instanceof Error ? e.message : 'Failed to load history' });
     }
   },
 
@@ -75,7 +76,7 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
       });
     } catch (e) {
       console.error('Failed to load more history:', e);
-      set({ isLoading: false });
+      set({ isLoading: false, error: e instanceof Error ? e.message : 'Failed to load more history' });
     }
   },
 

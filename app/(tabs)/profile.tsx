@@ -94,6 +94,8 @@ export default function ProfileScreen() {
             <Pressable
               onPress={toggleUnits}
               className="bg-gray-800 rounded-2xl p-4 mb-3 flex-row items-center justify-between"
+              accessibilityRole="button"
+              accessibilityLabel={`Toggle weight units. Currently ${unitPreference}`}
             >
               <View className="flex-row items-center">
                 <Ionicons name="barbell-outline" size={24} color={COLORS.text.secondary} />
@@ -111,6 +113,8 @@ export default function ProfileScreen() {
             <Pressable
               onPress={() => setEditingWeeklyTarget((v) => !v)}
               className="bg-gray-800 rounded-2xl p-4 mb-3"
+              accessibilityRole="button"
+              accessibilityLabel="Edit weekly workout target"
             >
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center">
@@ -136,7 +140,11 @@ export default function ProfileScreen() {
                     }}
                   />
                   <View className="flex-row justify-end mt-3">
-                    <Pressable onPress={() => setEditingWeeklyTarget(false)}>
+                    <Pressable
+                      onPress={() => setEditingWeeklyTarget(false)}
+                      accessibilityRole="button"
+                      accessibilityLabel="Done editing weekly target"
+                    >
                       <Text className="text-white" style={{ color: COLORS.accent.primary }}>Done</Text>
                     </Pressable>
                   </View>
@@ -148,6 +156,8 @@ export default function ProfileScreen() {
             <Pressable
               onPress={() => setEditingRestTimer((v) => !v)}
               className="bg-gray-800 rounded-2xl p-4 mb-6"
+              accessibilityRole="button"
+              accessibilityLabel="Edit rest timer settings"
             >
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center">
@@ -188,11 +198,16 @@ export default function ProfileScreen() {
                       }}
                       trackColor={{ false: '#555', true: COLORS.accent.primary }}
                       thumbColor={autoStartRestTimer ? '#000' : '#f4f3f4'}
+                      accessibilityLabel="Auto-start rest timer after completing a set"
                     />
                   </View>
 
                   <View className="flex-row justify-end mt-3">
-                    <Pressable onPress={() => setEditingRestTimer(false)}>
+                    <Pressable
+                      onPress={() => setEditingRestTimer(false)}
+                      accessibilityRole="button"
+                      accessibilityLabel="Done editing rest timer"
+                    >
                       <Text className="text-white" style={{ color: COLORS.accent.primary }}>Done</Text>
                     </Pressable>
                   </View>
@@ -203,13 +218,24 @@ export default function ProfileScreen() {
             {/* Data Section */}
             <Text className="text-xl font-semibold text-white mb-4 mt-4">Data</Text>
 
-            <Pressable onPress={handleExport} className="bg-gray-800 rounded-2xl p-4 mb-3">
+            <Pressable
+              onPress={handleExport}
+              className="bg-gray-800 rounded-2xl p-4 mb-3"
+              accessibilityRole="button"
+              accessibilityLabel="Export data to JSON"
+            >
               <Text className="text-white text-base font-medium">Export Data</Text>
               <Text className="text-gray-400 text-sm mt-1">Share your data as JSON</Text>
             </Pressable>
 
             {/* Import Data */}
-            <Pressable onPress={() => setImportExpanded((v) => !v)} className="bg-gray-800 rounded-2xl p-4 mb-3">
+            <Pressable
+              onPress={() => setImportExpanded((v) => !v)}
+              className="bg-gray-800 rounded-2xl p-4 mb-3"
+              accessibilityRole="button"
+              accessibilityLabel="Import data from JSON"
+              accessibilityHint="Expands to show paste area and actions"
+            >
               <Text className="text-white text-base font-medium">Import Data</Text>
               <Text className="text-gray-400 text-sm mt-1">Paste previously exported JSON</Text>
               {importExpanded && (
@@ -225,7 +251,12 @@ export default function ProfileScreen() {
                     style={{ textAlignVertical: 'top' }}
                   />
                   <View className="flex-row justify-end mt-3">
-                    <Pressable onPress={() => setImportText('')} className="mr-4">
+                    <Pressable
+                      onPress={() => setImportText('')}
+                      className="mr-4"
+                      accessibilityRole="button"
+                      accessibilityLabel="Clear import text"
+                    >
                       <Text className="text-gray-300">Clear</Text>
                     </Pressable>
                     <Pressable
@@ -245,6 +276,8 @@ export default function ProfileScreen() {
                           Alert.alert('Import failed', e?.message || 'Unable to import data.');
                         }
                       }}
+                      accessibilityRole="button"
+                      accessibilityLabel="Import data"
                     >
                       <Text style={{ color: COLORS.accent.primary }} className="font-semibold">Import</Text>
                     </Pressable>
@@ -253,7 +286,13 @@ export default function ProfileScreen() {
               )}
             </Pressable>
 
-            <Pressable onPress={handleDeleteAll} className="bg-gray-800 rounded-2xl p-4 mb-6">
+            <Pressable
+              onPress={handleDeleteAll}
+              className="bg-gray-800 rounded-2xl p-4 mb-6"
+              accessibilityRole="button"
+              accessibilityLabel="Delete all data"
+              accessibilityHint="This action cannot be undone"
+            >
               <Text className="text-white text-base font-medium">Delete All Data</Text>
               <Text className="text-gray-400 text-sm mt-1">Permanently remove all data</Text>
             </Pressable>

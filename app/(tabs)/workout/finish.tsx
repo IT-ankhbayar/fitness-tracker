@@ -198,6 +198,8 @@ export default function FinishSummaryScreen() {
             onPress={handleDone}
             className="py-4 rounded-full items-center"
             style={{ backgroundColor: COLORS.accent.primary }}
+            accessibilityRole="button"
+            accessibilityLabel="Done"
           >
             <Text className="text-black text-lg font-bold">Done</Text>
           </Pressable>

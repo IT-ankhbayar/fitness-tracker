@@ -38,7 +38,12 @@ export function NotesSheet({ visible, initialValue, onSave, onClose }: NotesShee
                 {/* Header */}
                 <View className="flex-row items-center justify-between px-6 py-4 border-b" style={{ borderBottomColor: COLORS.border }}>
                     <Text className="text-2xl font-bold text-white">Workout Notes</Text>
-                    <Pressable onPress={onClose} hitSlop={8}>
+                    <Pressable
+                        onPress={onClose}
+                        hitSlop={10}
+                        accessibilityRole="button"
+                        accessibilityLabel="Close notes"
+                    >
                         <Ionicons name="close" size={28} color={COLORS.text.primary} />
                     </Pressable>
                 </View>
@@ -65,6 +70,8 @@ export function NotesSheet({ visible, initialValue, onSave, onClose }: NotesShee
                         onPress={handleSave}
                         className="py-4 rounded-full items-center"
                         style={{ backgroundColor: COLORS.accent.primary }}
+                        accessibilityRole="button"
+                        accessibilityLabel="Save notes"
                     >
                         <Text className="text-black text-lg font-bold">Save Notes</Text>
                     </Pressable>

@@ -19,7 +19,11 @@ export function FilterChip({ label, selected, onPress }: FilterChipProps) {
         backgroundColor: selected ? COLORS.accent.primary : COLORS.background.secondary,
         borderWidth: 1,
         borderColor: selected ? COLORS.accent.primary : COLORS.border,
+        minHeight: 44,
+        justifyContent: 'center',
       }}
+      accessibilityRole="button"
+      accessibilityLabel={`${label} filter ${selected ? 'selected' : 'not selected'}`}
     >
       <Text
         className="text-sm font-medium"

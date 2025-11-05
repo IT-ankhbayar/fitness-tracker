@@ -31,7 +31,12 @@ export function SegmentedControl({
               backgroundColor: isSelected
                 ? COLORS.background.tertiary
                 : 'transparent',
+              minHeight: 44,
+              justifyContent: 'center',
             }}
+            accessibilityRole="button"
+            accessibilityState={{ selected: isSelected }}
+            accessibilityLabel={`Select ${option}`}
           >
             <Text
               className="text-sm font-medium"

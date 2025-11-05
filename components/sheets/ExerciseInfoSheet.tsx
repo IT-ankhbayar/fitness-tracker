@@ -39,7 +39,12 @@ export function ExerciseInfoSheet({
             <Text className="text-2xl font-bold text-white">
               Exercise Info
             </Text>
-            <Pressable onPress={onClose} hitSlop={8}>
+            <Pressable
+              onPress={onClose}
+              hitSlop={10}
+              accessibilityRole="button"
+              accessibilityLabel="Close exercise info"
+            >
               <Ionicons name="close" size={28} color={COLORS.text.primary} />
             </Pressable>
           </View>

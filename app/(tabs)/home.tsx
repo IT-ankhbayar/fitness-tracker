@@ -11,6 +11,8 @@ import { useHistoryStore } from '../../store/historyStore';
 import { workoutService } from '../../services/workoutService';
 import { useProgressStore } from '../../store/progressStore';
 import { useSettingsStore } from '../../store/settingsStore';
+import * as Haptics from 'expo-haptics';
+import Animated, { FadeInRight, Layout as AnimatedLayout } from 'react-native-reanimated';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -89,6 +91,9 @@ export default function HomeScreen() {
               className="rounded-2xl p-6 mb-4"
               style={{ backgroundColor: COLORS.accent.primary }}
               activeOpacity={0.85}
+              accessibilityRole="button"
+              accessibilityLabel="Start Workout"
+              accessibilityHint="Begin a fresh session"
             >
               <Text className="text-white text-xl font-semibold mb-1">Start Workout</Text>
               <Text className="text-white/80">Begin a fresh session</Text>
@@ -99,6 +104,9 @@ export default function HomeScreen() {
               onPress={handleRepeatLastWorkout}
               className="rounded-2xl p-6 mb-4 bg-gray-800"
               activeOpacity={0.85}
+              accessibilityRole="button"
+              accessibilityLabel="Repeat Last Workout"
+              accessibilityHint="Copy your most recent routine"
             >
               <Text className="text-white text-xl font-semibold mb-1">Repeat Last Workout</Text>
               <Text className="text-gray-300">Copy your most recent routine</Text>
@@ -109,6 +117,9 @@ export default function HomeScreen() {
               onPress={handlePlanWorkout}
               className="rounded-2xl p-6 mb-2 bg-gray-800"
               activeOpacity={0.85}
+              accessibilityRole="button"
+              accessibilityLabel="Plan Workout"
+              accessibilityHint="Set up exercises before you start"
             >
               <Text className="text-white text-xl font-semibold mb-1">Plan Workout</Text>
               <Text className="text-gray-300">Set up exercises before you start</Text>
@@ -152,17 +163,27 @@ export default function HomeScreen() {
             <Text className="text-xl font-semibold text-white mb-4">Recent PRs</Text>
             {recentPRs && recentPRs.length > 0 ? (
               <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-6 px-6">
-                {recentPRs.map((pr) => (
+                {recentPRs.map((pr, idx) => (
                   <TouchableOpacity
                     key={pr.id}
                     activeOpacity={0.9}
-                    onPress={() =>
-                      pr.workout_id &&
-                      router.push({ pathname: '/(tabs)/history/[id]', params: { id: String(pr.workout_id) } })
-                    }
+                    onPress={async () => {
+                      // Celebrate PR with success haptic
+                      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => { });
+                      if (pr.workout_id) {
+                        router.push({ pathname: '/(tabs)/history/[id]', params: { id: String(pr.workout_id) } });
+                      }
+                    }}
                     className="mr-4"
+                    accessibilityRole="button"
+                    accessibilityLabel={`Open workout with ${pr.exerciseName || 'exercise'} PR ${pr.type} ${renderPRValue(pr.type, pr.value, pr.reps)}`}
                   >
-                    <View className="bg-gray-800 rounded-2xl p-4" style={{ width: 220 }}>
+                    <Animated.View
+                      className="bg-gray-800 rounded-2xl p-4"
+                      style={{ width: 220 }}
+                      entering={FadeInRight.springify().damping(18).delay(idx * 60)}
+                      layout={AnimatedLayout.springify().damping(20)}
+                    >
                       <View className="flex-row items-center justify-between mb-2">
                         <Text className="text-white font-semibold" numberOfLines={1}>
                           {pr.exerciseName || 'Exercise'}
@@ -175,7 +196,7 @@ export default function HomeScreen() {
                         {renderPRValue(pr.type, pr.value, pr.reps)}
                       </Text>
                       <Text className="text-gray-400 text-xs">{formatRelativeTime(pr.achieved_at)}</Text>
-                    </View>
+                    </Animated.View>
                   </TouchableOpacity>
                 ))}
               </ScrollView>
@@ -199,6 +220,8 @@ export default function HomeScreen() {
                   activeOpacity={0.85}
                   onPress={() => router.push({ pathname: '/(tabs)/history/[id]', params: { id: String(w.id) } })}
                   className="bg-gray-800 rounded-2xl p-4 mb-3"
+                  accessibilityRole="button"
+                  accessibilityLabel={`Open workout from ${formatDate(w.started_at, 'medium')}`}
                 >
                   <View className="flex-row items-center justify-between mb-1">
                     <Text className="text-white font-semibold">{formatDate(w.started_at, 'medium')}</Text>

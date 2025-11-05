@@ -9,10 +9,13 @@ import { useProgressStore } from '../../store/progressStore';
 import { useSettingsStore } from '../../store/settingsStore';
 import { formatPercentage, formatRelativeTime, formatVolume } from '../../utils/formatters';
 import { router } from 'expo-router';
+import { EmptyState } from '../../components/feedback/EmptyState';
+import { Button } from '../../components/Button';
 
 export default function ProgressScreen() {
   const {
     loading,
+    error,
     weeklyTarget,
     weeklyCount,
     consistencyPct,
@@ -46,6 +49,13 @@ export default function ProgressScreen() {
           <View className="flex-1 items-center justify-center">
             <ActivityIndicator color={COLORS.accent.primary} />
           </View>
+        ) : error ? (
+          <EmptyState
+            icon="alert-circle-outline"
+            title="Unable to load progress"
+            message="Please check your connection and try again."
+            action={<Button title="Retry" onPress={() => load({ weeks: 8 })} accessibilityRole="button" accessibilityLabel="Retry loading progress" />}
+          />
         ) : (
           <ScrollView
             className="flex-1 px-6"

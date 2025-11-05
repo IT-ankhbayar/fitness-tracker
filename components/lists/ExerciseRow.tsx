@@ -17,7 +17,7 @@ interface ExerciseRowProps {
   isSelected?: boolean;
 }
 
-export function ExerciseRow({
+function ExerciseRowInner({
   exercise,
   onPress,
   onAddPress,
@@ -46,6 +46,8 @@ export function ExerciseRow({
         borderWidth: isSelected ? 1 : 0,
         borderColor: COLORS.accent.primary,
       }}
+      accessibilityRole="button"
+      accessibilityLabel={`View exercise ${exercise.name}`}
     >
       {/* Main Content */}
       <View className="flex-1 mr-3">
@@ -80,8 +82,10 @@ export function ExerciseRow({
         {showFavoriteButton && onFavoritePress && (
           <Pressable
             onPress={onFavoritePress}
-            hitSlop={8}
+            hitSlop={10}
             className="mr-3"
+            accessibilityRole="button"
+            accessibilityLabel={`${exercise.is_favorite === 1 ? 'Unfavorite' : 'Favorite'} ${exercise.name}`}
           >
             <Ionicons
               name={exercise.is_favorite === 1 ? 'heart' : 'heart-outline'}
@@ -94,8 +98,10 @@ export function ExerciseRow({
         {onInfoPress && (
           <Pressable
             onPress={onInfoPress}
-            hitSlop={8}
+            hitSlop={10}
             className="mr-3"
+            accessibilityRole="button"
+            accessibilityLabel={`More info about ${exercise.name}`}
           >
             <Ionicons
               name="information-circle-outline"
@@ -108,13 +114,15 @@ export function ExerciseRow({
         {showAddButton && onAddPress && (
           <Pressable
             onPress={onAddPress}
-            hitSlop={8}
+            hitSlop={10}
             className="w-8 h-8 rounded-full items-center justify-center"
             style={{
               backgroundColor: isSelected
                 ? COLORS.accent.secondary
                 : COLORS.accent.primary,
             }}
+            accessibilityRole="button"
+            accessibilityLabel={`${isSelected ? 'Remove' : 'Add'} ${exercise.name} ${isSelected ? 'from selection' : 'to selection'}`}
           >
             <Ionicons
               name={isSelected ? 'checkmark' : 'add'}
@@ -127,3 +135,5 @@ export function ExerciseRow({
     </Pressable>
   );
 }
+
+export const ExerciseRow = React.memo(ExerciseRowInner);

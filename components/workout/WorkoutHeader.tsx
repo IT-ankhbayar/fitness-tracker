@@ -11,6 +11,10 @@ interface WorkoutHeaderProps {
   onFinish: () => void;
   onCancel: () => void;
   onOpenNotes?: () => void;
+  // Rest timer pill
+  restRemaining?: number;
+  restTimerActive?: boolean;
+  onOpenRestTimer?: () => void;
 }
 
 export function WorkoutHeader({
@@ -18,6 +22,9 @@ export function WorkoutHeader({
   onFinish,
   onCancel,
   onOpenNotes,
+  restRemaining = 0,
+  restTimerActive = false,
+  onOpenRestTimer,
 }: WorkoutHeaderProps) {
   return (
     <View
@@ -25,11 +32,16 @@ export function WorkoutHeader({
       style={{ borderBottomColor: COLORS.border }}
     >
       {/* Cancel Button */}
-      <Pressable onPress={onCancel} hitSlop={8}>
+      <Pressable
+        onPress={onCancel}
+        hitSlop={10}
+        accessibilityRole="button"
+        accessibilityLabel="Cancel workout"
+      >
         <Ionicons name="close" size={28} color={COLORS.text.secondary} />
       </Pressable>
 
-      {/* Timer */}
+      {/* Timers */}
       <View className="items-center">
         <View className="flex-row items-center">
           <Ionicons name="time-outline" size={20} color={COLORS.accent.primary} />
@@ -40,12 +52,39 @@ export function WorkoutHeader({
         <Text className="text-xs mt-1" style={{ color: COLORS.text.tertiary }}>
           Workout Duration
         </Text>
+
+        {/* Rest timer pill */}
+        {restRemaining > 0 && (
+          <Pressable
+            onPress={onOpenRestTimer}
+            accessibilityRole="button"
+            accessibilityLabel={restTimerActive ? `Rest timer running ${formatTimerDuration(restRemaining)}` : `Rest timer paused ${formatTimerDuration(restRemaining)}`}
+            className="mt-2 px-3 py-1 rounded-full flex-row items-center"
+            style={{ backgroundColor: COLORS.background.secondary }}
+            hitSlop={8}
+          >
+            <Ionicons
+              name={restTimerActive ? 'timer-outline' : 'pause'}
+              size={14}
+              color={COLORS.text.primary}
+            />
+            <Text className="ml-2 text-xs font-medium" style={{ color: COLORS.text.primary }}>
+              {formatTimerDuration(restRemaining)}
+            </Text>
+          </Pressable>
+        )}
       </View>
 
       {/* Notes + Finish */}
       <View className="flex-row items-center">
         {onOpenNotes && (
-          <Pressable onPress={onOpenNotes} hitSlop={8} className="mr-3">
+          <Pressable
+            onPress={onOpenNotes}
+            hitSlop={10}
+            className="mr-3"
+            accessibilityRole="button"
+            accessibilityLabel="Open workout notes"
+          >
             <Ionicons name="document-text-outline" size={24} color={COLORS.text.secondary} />
           </Pressable>
         )}
@@ -53,6 +92,8 @@ export function WorkoutHeader({
           onPress={onFinish}
           className="px-4 py-2 rounded-full"
           style={{ backgroundColor: COLORS.accent.secondary }}
+          accessibilityRole="button"
+          accessibilityLabel="Finish workout"
         >
           <Text className="text-black font-bold">Finish</Text>
         </Pressable>

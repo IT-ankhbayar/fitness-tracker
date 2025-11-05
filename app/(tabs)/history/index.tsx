@@ -1,7 +1,7 @@
 // History list screen with date grouping and infinite scroll
 
 import React, { useEffect, useMemo } from 'react';
-import { View, Text, FlatList, ListRenderItemInfo, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, ListRenderItemInfo, ActivityIndicator, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useHistoryStore } from '../../../store/historyStore';
@@ -11,13 +11,14 @@ import { WorkoutCard } from '../../../components/lists/WorkoutCard';
 import { COLORS } from '../../../utils/constants';
 import { formatDate } from '../../../utils/formatters';
 import { EmptyState } from '../../../components/feedback/EmptyState';
+import { Button } from '../../../components/Button';
 
 interface WorkoutListItemExt extends Workout {
     exercise_count: number;
 }
 
 export default function HistoryListScreen() {
-    const { items, isLoading, hasMore, loadInitial, loadMore } = useHistoryStore();
+    const { items, isLoading, hasMore, loadInitial, loadMore, error } = useHistoryStore();
     const unit = useSettingsStore((s) => s.unitPreference);
 
     useEffect(() => {
@@ -59,9 +60,19 @@ export default function HistoryListScreen() {
                 {/* Content */}
                 {data.length === 0 && !isLoading ? (
                     <EmptyState
-                        icon="calendar-outline"
-                        title="No Workouts Yet"
-                        message="Complete your first workout to start tracking your progress"
+                        icon={error ? 'alert-circle-outline' : 'calendar-outline'}
+                        title={error ? 'Something went wrong' : 'No Workouts Yet'}
+                        message={error ? 'We couldn\'t load your history. Please try again.' : 'Complete your first workout to start tracking your progress'}
+                        action={
+                            error ? (
+                                <Button
+                                    title="Retry"
+                                    onPress={loadInitial}
+                                    accessibilityRole="button"
+                                    accessibilityLabel="Retry loading history"
+                                />
+                            ) : undefined
+                        }
                     />
                 ) : (
                     <FlatList
@@ -69,10 +80,21 @@ export default function HistoryListScreen() {
                         keyExtractor={(item) => String(item.id)}
                         renderItem={renderItem}
                         contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24 }}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={!!isLoading && data.length === 0}
+                                onRefresh={loadInitial}
+                                tintColor={COLORS.accent.primary}
+                            />
+                        }
                         onEndReachedThreshold={0.5}
                         onEndReached={() => {
                             if (!isLoading && hasMore) loadMore();
                         }}
+                        initialNumToRender={10}
+                        maxToRenderPerBatch={10}
+                        windowSize={10}
+                        removeClippedSubviews
                         ListFooterComponent={
                             isLoading ? (
                                 <View className="py-4">

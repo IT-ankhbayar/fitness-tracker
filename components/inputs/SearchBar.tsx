@@ -63,7 +63,12 @@ export function SearchBar({
         className="flex-1 text-white text-base"
       />
       {localValue.length > 0 && (
-        <Pressable onPress={handleClear} hitSlop={8}>
+        <Pressable
+          onPress={handleClear}
+          hitSlop={10}
+          accessibilityRole="button"
+          accessibilityLabel="Clear search"
+        >
           <Ionicons name="close-circle" size={20} color={COLORS.text.secondary} />
         </Pressable>
       )}

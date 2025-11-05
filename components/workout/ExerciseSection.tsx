@@ -7,6 +7,7 @@ import { WorkoutExerciseWithDetails } from '../../types/workout';
 import { Set } from '../../types/database';
 import { SetRow } from './SetRow';
 import { COLORS } from '../../utils/constants';
+import * as Haptics from 'expo-haptics';
 
 interface ExerciseSectionProps {
   workoutExercise: WorkoutExerciseWithDetails;
@@ -50,10 +51,21 @@ export function ExerciseSection({
         </View>
 
         <View className="flex-row items-center">
-          <Pressable onPress={onShowInfo} hitSlop={8} className="mr-3">
+          <Pressable
+            onPress={onShowInfo}
+            hitSlop={10}
+            className="mr-3"
+            accessibilityRole="button"
+            accessibilityLabel={`Exercise info for ${exercise.name}`}
+          >
             <Ionicons name="information-circle-outline" size={24} color={COLORS.text.secondary} />
           </Pressable>
-          <Pressable onPress={onRemoveExercise} hitSlop={8}>
+          <Pressable
+            onPress={onRemoveExercise}
+            hitSlop={10}
+            accessibilityRole="button"
+            accessibilityLabel={`Remove ${exercise.name} from workout`}
+          >
             <Ionicons name="trash-outline" size={24} color={COLORS.text.secondary} />
           </Pressable>
         </View>
@@ -122,9 +134,15 @@ export function ExerciseSection({
       {/* Action Buttons */}
       <View className="flex-row mt-4">
         <Pressable
-          onPress={onAddSet}
+          onPress={async () => {
+            // Subtle impact for add
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
+            onAddSet();
+          }}
           className="flex-1 flex-row items-center justify-center py-3 rounded-xl mr-2"
           style={{ backgroundColor: COLORS.background.tertiary }}
+          accessibilityRole="button"
+          accessibilityLabel={`Add set to ${exercise.name}`}
         >
           <Ionicons name="add" size={20} color={COLORS.accent.primary} />
           <Text className="ml-2 font-semibold" style={{ color: COLORS.accent.primary }}>
@@ -137,6 +155,8 @@ export function ExerciseSection({
             onPress={onDuplicateLastSet}
             className="flex-1 flex-row items-center justify-center py-3 rounded-xl ml-2"
             style={{ backgroundColor: COLORS.background.tertiary }}
+            accessibilityRole="button"
+            accessibilityLabel={`Copy last set for ${exercise.name}`}
           >
             <Ionicons name="copy-outline" size={20} color={COLORS.text.secondary} />
             <Text className="ml-2 font-semibold" style={{ color: COLORS.text.secondary }}>
